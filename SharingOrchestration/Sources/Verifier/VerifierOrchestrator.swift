@@ -72,6 +72,10 @@ public class VerifierOrchestrator: VerifierOrchestratorProtocol {
     }
 
     func performPreflightChecks() {
+        guard let session,
+              session.currentState.kind == .notStarted ||
+              session.currentState.kind == .preflight ||
+              session.currentState.kind == .readyToScan else { return }
         if prerequisiteGate == nil {
             prerequisiteGate = PrerequisiteGate()
         }
@@ -86,8 +90,8 @@ public class VerifierOrchestrator: VerifierOrchestratorProtocol {
                 self.performPreflightChecks()
             }
             if missingPrerequisites.isEmpty {
-                try session?.transition(to: .readyToScan)
-                delegate?.orchestrator(didUpdateState: session?.currentState)
+                try session.transition(to: .readyToScan)
+                delegate?.orchestrator(didUpdateState: session.currentState)
             } else {
                 let bluetoothStateIsUnknown = missingPrerequisites.contains {
                     if case .bluetooth(.stateUnknown) = $0 { return true }
@@ -99,16 +103,16 @@ public class VerifierOrchestrator: VerifierOrchestratorProtocol {
                 guard !bluetoothStateIsUnknown else { return }
 
                 if let unrecoverablePrerequisite = missingPrerequisites.first(where: { !$0.isRecoverable }) {
-                    try session?.transition(
+                    try session.transition(
                         to: .failed(.unrecoverablePrerequisite(unrecoverablePrerequisite))
                     )
-                    delegate?.orchestrator(didUpdateState: session?.currentState)
+                    delegate?.orchestrator(didUpdateState: session.currentState)
                     return
                 }
-                try session?.transition(
+                try session.transition(
                     to: .preflight(missingPrerequisites: missingPrerequisites)
                 )
-                delegate?.orchestrator(didUpdateState: session?.currentState)
+                delegate?.orchestrator(didUpdateState: session.currentState)
             }
         } catch {
             delegate?.orchestrator(didUpdateState: .failed(.generic(error.localizedDescription)))

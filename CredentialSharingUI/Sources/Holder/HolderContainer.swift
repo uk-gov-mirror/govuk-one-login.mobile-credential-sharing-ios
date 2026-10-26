@@ -138,6 +138,8 @@ extension HolderContainer: @MainActor HolderOrchestratorDelegate {
     }
     
     private func renderGetReadyToShareUI(for presentation: ReadinessPresentation) {
+        // A single view controller renders every preflight state; it selects
+        // the view model matching the current presentation.
         navigateTo(
             ReadinessViewController(
                 presentation: presentation,

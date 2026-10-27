@@ -1,5 +1,6 @@
 import DesignSystem
 import GDSAnalytics
+import Logging
 import SharingLogging
 import SharingOrchestration
 import SharingPrerequisiteGate
@@ -18,12 +19,17 @@ struct BluetoothPoweredOffViewModel: GDSScreenViewModel, BaseViewModel {
     let backButtonIsHidden: Bool = true
     let didAppear: DesignSystem.Action?
     let didDismiss: DesignSystem.Action?
-
+    
+    let analyticsService: AnalyticsService?
     private let orchestrator: HolderOrchestratorProtocol
     
     // swiftlint:disable:next function_body_length
-    init(orchestrator: HolderOrchestratorProtocol) {
+    init(
+        orchestrator: HolderOrchestratorProtocol,
+        analyticsService: AnalyticsService? = nil
+    ) {
         self.orchestrator = orchestrator
+        self.analyticsService = analyticsService
 
         let title = GDSTextViewModel(
             title: GDSLocalisedString(stringKey: "turnOnBluetoothTitle", bundle: .module),
@@ -73,20 +79,17 @@ struct BluetoothPoweredOffViewModel: GDSScreenViewModel, BaseViewModel {
         self.body = [title, intro, steps, footnote]
 
         self.didAppear = .action {
-            _ = ScreenView(
-                id: AnalyticsScreen.turnOnBluetooth.id,
-                screen: AnalyticsScreen.turnOnBluetooth,
-                titleKey: "turnOnBluetoothTitle",
-                bundle: .module
+            analyticsService?.trackScreenEvent(
+                ScreenViewEventName.screenView,
+                title: AnalyticsScreen.turnOnBluetooth.rawValue,
+                screenClass: .modal,
+                screenID: AnalyticsScreen.turnOnBluetooth.id,
             )
-            // call analyticsService.trackScreen(screen)
-            Logger.log("Turn on Bluetooth screen appeared")
         }
 
         self.didDismiss = .action {
-            // call analyticsService.logEvent() for Cancel
-            _ = ButtonEvent(textKey: "cancel", bundle: .module)
-            Logger.log("Turn on Bluetooth: Cancel tapped")
+            let event = ButtonEvent(textKey: "cancel", bundle: .module)
+            analyticsService?.trackButtonEvent(event)
             orchestrator.userDidTapCancel()
         }
     }

@@ -47,8 +47,7 @@ struct PrerequisiteGateTests {
         let prerequisite: [Prerequisite] = [.bluetooth]
         
         for auth in [CBManagerAuthorization.allowedAlways, .notDetermined, .denied, .restricted] {
-            sut = PrerequisiteGate(cbManagerAuthorization: auth, requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>()
-                .callAsFunction())
+            sut = PrerequisiteGate(cbManagerAuthorization: auth)
             sut.blePeripheralTransport = mockBlePeripheralTransport
             
             let result = sut.evaluatePrerequisites(for: prerequisite) {}
@@ -68,24 +67,21 @@ struct PrerequisiteGateTests {
         }
     }
     
-    @Test("Ensures CBPeripheralManager is initialized when triggerResolution(for: MissingPrerequisite.bluetooth(.statePoweredOff))")
-    mutating func showPowerAlertKeyIsTrue() throws {
-        // Given
-        MockCBPeripheralManager.initCalled = false
-        #expect(MockCBPeripheralManager.initCalled == false)
-        sut = PrerequisiteGate(
-            cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction()
-        )
+    @Test("triggerResolution(.bluetooth(.statePoweredOff)) does not show a system prompt and keeps the existing transport")
+    mutating func poweredOffResolutionDoesNotShowSystemPrompt() throws {
+        // Given: Bluetooth is powered off and a transport already exists from
+        // evaluation. The user turns Bluetooth on manually (guided by the
+        // on-screen instructions) rather than via a system prompt.
+        sut = PrerequisiteGate(cbManagerAuthorization: .allowedAlways)
         let mockBlePeripheralTransport = MockBlePeripheralTransport()
         sut.blePeripheralTransport = mockBlePeripheralTransport
-        
+
         // When
         sut.triggerResolution(for: MissingPrerequisite.bluetooth(.statePoweredOff))
-        
-        // Then
-        #expect(MockCBPeripheralManager.initCalled == true)
-        #expect(MockCBPeripheralManager.options as? [String: Bool] == [CBPeripheralManagerOptionShowPowerAlertKey: true])
+
+        // Then: the existing transport is untouched (no new CBPeripheralManager
+        // created to trigger a system alert).
+        #expect(sut.blePeripheralTransport === mockBlePeripheralTransport)
     }
     
     @Test("evaluatePrerequisites initialises a BlePeripheralTransport if one does not exist")
@@ -241,7 +237,6 @@ struct PrerequisiteGateTests {
         let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: false)
         let sut = PrerequisiteGate(
             cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
             cameraHardware: mockCamera
         )
         
@@ -259,7 +254,6 @@ struct PrerequisiteGateTests {
         let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: true, authorizationStatus: .notDetermined)
         let sut = PrerequisiteGate(
             cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
             cameraHardware: mockCamera
         )
         
@@ -277,7 +271,6 @@ struct PrerequisiteGateTests {
         let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: true, authorizationStatus: .denied)
         let sut = PrerequisiteGate(
             cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
             cameraHardware: mockCamera
         )
         
@@ -295,7 +288,6 @@ struct PrerequisiteGateTests {
         let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: true, authorizationStatus: .restricted)
         let sut = PrerequisiteGate(
             cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
             cameraHardware: mockCamera
         )
         
@@ -313,7 +305,6 @@ struct PrerequisiteGateTests {
         let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: true, authorizationStatus: .authorized)
         let sut = PrerequisiteGate(
             cbManagerAuthorization: .allowedAlways,
-            requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
             cameraHardware: mockCamera
         )
         
@@ -330,7 +321,6 @@ struct PrerequisiteGateTests {
             let mockCamera = MockCameraCapabilityProvider(isCameraAvailable: true, authorizationStatus: .notDetermined)
             let sut = PrerequisiteGate(
                 cbManagerAuthorization: .allowedAlways,
-                requestBluetoothPowerOn: BluetoothPowerOnRequest<MockCBPeripheralManager>().callAsFunction(),
                 cameraHardware: mockCamera
             )
 

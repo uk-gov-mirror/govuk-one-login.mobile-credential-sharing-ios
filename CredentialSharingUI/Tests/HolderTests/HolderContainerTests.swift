@@ -88,6 +88,36 @@ struct HolderContainerTests {
                 .contains(where: { $0 is ReadinessViewController })
         )
     }
+
+    @Test("orchestrator didUpdateState .preflight with Bluetooth .statePoweredOff pushes ReadinessViewController hosting the BluetoothPoweredOffViewModel")
+    func renderPoweredOffPushesTurnOnBluetoothViewModel() async throws {
+        // Given
+        let sut = HolderContainer(orchestrator: mockOrchestrator)
+        let state = HolderSessionState.preflight(
+            ReadinessPresentation(
+                missingPrerequisites: [MissingPrerequisite.bluetooth(.statePoweredOff)],
+                cancelRequiresConfirmation: false
+            )
+        )
+        let baseNavigationController = UINavigationController(
+            rootViewController: sut
+        )
+        _ = sut.view
+        _ = baseNavigationController.view
+
+        // When
+        sut.orchestrator(didUpdateState: state)
+
+        // Then
+        let navigationController = try #require(sut.navigationController)
+        #expect(navigationController.viewControllers.count == 2)
+        let readiness = try #require(
+            navigationController.viewControllers
+                .compactMap { $0 as? ReadinessViewController }
+                .first
+        )
+        #expect(readiness.viewModel is BluetoothPoweredOffViewModel)
+    }
     
     @Test("orchestrator didUpdateState .processingEstablishment pushes LoadingViewController")
     func processingEngagementPushesLoadingViewController() throws {

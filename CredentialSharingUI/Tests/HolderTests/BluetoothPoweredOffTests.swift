@@ -1,4 +1,6 @@
 import DesignSystem
+import GDSAnalytics
+import SharingLogging
 import SharingOrchestration
 import SharingPrerequisiteGate
 import Testing
@@ -10,9 +12,14 @@ import UIKit
 @Suite("Turn On Bluetooth Screen Tests")
 struct BluetoothPoweredOffTests {
     let mockOrchestrator = MockHolderOrchestrator()
+    let analyticsService = MockAnalyticsService()
+
 
     private func makeViewModel() -> BluetoothPoweredOffViewModel {
-        BluetoothPoweredOffViewModel(orchestrator: mockOrchestrator)
+        BluetoothPoweredOffViewModel(
+            orchestrator: mockOrchestrator,
+            analyticsService: analyticsService
+        )
     }
 
     private func textViewModels(in viewModel: BluetoothPoweredOffViewModel) -> [GDSTextViewModel] {
@@ -82,9 +89,15 @@ struct BluetoothPoweredOffTests {
 
     // MARK: Interaction
 
-    @Test("Cancel (didDismiss) routes to the orchestrator with no confirmation")
+    @Test("Cancel (didDismiss) routes to the orchestrator and tracks analytics event")
     func cancelRoutesToOrchestrator() throws {
         let viewModel = makeViewModel()
+        let expectedEvent = ButtonEvent(
+            textKey: "cancel",
+            bundle: .module
+        )
+        
+        #expect(analyticsService.logEventCallCount == 0)
         #expect(mockOrchestrator.cancelPresentationCalled == false)
 
         if case let .action(action) = viewModel.didDismiss {
@@ -94,22 +107,29 @@ struct BluetoothPoweredOffTests {
         }
 
         #expect(mockOrchestrator.cancelPresentationCalled)
-        // No confirmation dialogue requested for this screen.
-        #expect(mockOrchestrator.confirmCancelCalled == false)
+        #expect(analyticsService.logEventCallCount == 1)
+        #expect(analyticsService.loggedEvent?.name == expectedEvent.name.rawValue)
+        #expect(analyticsService.loggedParameters != nil)
     }
 
-    @Test("didAppear runs without resolving or cancelling (analytics out of scope)")
-    func didAppearIsInert() throws {
+    @Test("didAppear logs the screen view")
+    func didAppearTracksScreenVisit() throws {
         let viewModel = makeViewModel()
+
+        #expect(analyticsService.logEventCallCount == 0)
 
         if case let .action(action) = viewModel.didAppear {
             action()
         } else {
             Issue.record("Expected a synchronous .action for didAppear")
         }
+        
+        let parameters = try #require(analyticsService.loggedParameters)
 
-        #expect(mockOrchestrator.resolveCalled == false)
-        #expect(mockOrchestrator.cancelPresentationCalled == false)
+        #expect(analyticsService.logEventCallCount == 1)
+        #expect(analyticsService.loggedEvent?.name == ScreenViewEventName.screenView.rawValue)
+        #expect(parameters["screen_class"] as? String == ScreenClass.modal.rawValue)
+        #expect(parameters["is_error"] as? String == "false")
     }
 
     // MARK: View controller selection

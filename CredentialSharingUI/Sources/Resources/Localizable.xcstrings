@@ -1,23 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "\"turnOnBluetoothStep1Bold\"" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "cy" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bluetooth"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bluetooth"
-          }
-        }
-      }
-    },
     "cancel" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -194,13 +177,30 @@
         "cy" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yng ngosodiadau ffôn, ewch i Bluetooth a gwnewch yn siŵr ei fod ymlaen."
+            "value" : "Cyn y gallwch rannu, mae angen i chi droi Bluetooth ymlaen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "In your phone settings, go to Bluetooth and make sure it is on."
+          }
+        }
+      }
+    },
+    "turnOnBluetoothStep1Bold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "cy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth"
           }
         }
       }

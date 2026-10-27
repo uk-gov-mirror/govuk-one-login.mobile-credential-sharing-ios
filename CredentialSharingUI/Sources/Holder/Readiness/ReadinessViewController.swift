@@ -11,8 +11,8 @@ final class ReadinessViewController: GDSScreen {
         analyticsService: AnalyticsService? = nil
     ) {
         super.init(
-            viewModel: GetReadyToShareViewModel(
-                presentation: presentation,
+            viewModel: Self.viewModel(
+                for: presentation,
                 orchestrator: orchestrator,
                 analyticsService: analyticsService
                 
@@ -28,7 +28,10 @@ final class ReadinessViewController: GDSScreen {
     ) -> GDSScreenViewModel {
         switch presentation.missingPrerequisites.first {
         case .bluetooth(.statePoweredOff):
-            return BluetoothPoweredOffViewModel(orchestrator: orchestrator)
+            return BluetoothPoweredOffViewModel(
+                orchestrator: orchestrator,
+                analyticsService: analyticsService
+            )
         case .bluetooth(.authorizationNotDetermined):
             return GetReadyToShareViewModel(
                 presentation: presentation,

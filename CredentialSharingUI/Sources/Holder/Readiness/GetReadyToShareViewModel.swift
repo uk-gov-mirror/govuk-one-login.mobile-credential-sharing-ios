@@ -65,7 +65,10 @@ struct GetReadyToShareViewModel: GDSScreenViewModel, BaseViewModel {
 
         let allowBluetoothButton = GDSButtonViewModel(
             title: GDSLocalisedString(stringKey: "getReadyToShareAllowBluetoothButton", bundle: .module).value,
-            style: .primary,
+            style: .primary.adjusting(
+                cornerStyle: .fixed,
+                cornerRadius: DesignSystem.CornerRadius.default
+            ),
             buttonAction: .action {
                 let event = ButtonEvent(
                     textKey: "getReadyToShareAllowBluetoothButton",
@@ -86,7 +89,10 @@ struct GetReadyToShareViewModel: GDSScreenViewModel, BaseViewModel {
 
         let findOutHowButton = GDSButtonViewModel(
             title: GDSLocalisedString(stringKey: "getReadyToShareFindOutHowButton", bundle: .module).value,
-            style: .secondary,
+            style: .secondary.adjusting(
+                cornerStyle: .fixed,
+                cornerRadius: DesignSystem.CornerRadius.default
+            ),
             buttonAction: .action {
                 let event = ButtonEvent(
                     textKey: "getReadyToShareFindOutHowButton",

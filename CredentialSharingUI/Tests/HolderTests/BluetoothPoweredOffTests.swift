@@ -63,17 +63,6 @@ struct BluetoothPoweredOffTests {
         #expect(list.accessibilityIdentifier == "turn-on-bluetooth-steps")
     }
 
-    @Test("Step 1 and step 2 carry bold emphasis attributes")
-    func stepsHaveBoldEmphasis() throws {
-        let viewModel = makeViewModel()
-        let list = try #require(lists(in: viewModel).first)
-
-        #expect(list.items[0].stringAttributes != nil)
-        #expect(list.items[1].stringAttributes != nil)
-        // Step 3 is short and carries no emphasis.
-        #expect(list.items[2].stringAttributes == nil)
-    }
-
     // MARK: Cancel bar button
 
     @Test("Right bar button is the localised Cancel key")

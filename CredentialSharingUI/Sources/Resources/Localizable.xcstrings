@@ -125,7 +125,7 @@
       "localizations" : {
         "cy" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "I wneud hyn:"
           }
         },
@@ -142,7 +142,7 @@
       "localizations" : {
         "cy" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cyn y gallwch rannu, mae angen i chi droi Bluetooth ymlaen."
           }
         },
@@ -177,7 +177,7 @@
         "cy" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cyn y gallwch rannu, mae angen i chi droi Bluetooth ymlaen."
+            "value" : "Yng ngosodiadau ffôn, ewch i Bluetooth a gwnewch yn siŵr ei fod ymlaen."
           }
         },
         "en" : {
@@ -261,7 +261,7 @@
       "localizations" : {
         "cy" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Troi Bluetooth ymlaen"
           }
         },

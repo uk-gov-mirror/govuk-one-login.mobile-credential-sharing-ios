@@ -52,7 +52,7 @@ struct BluetoothPoweredOffViewModel: GDSScreenViewModel, BaseViewModel {
                     stringKey: "turnOnBluetoothStep1",
                     stringAttributes: [
                         (GDSLocalisedString(stringKey: "turnOnBluetoothStep1Bold", bundle: .module).value,
-                         [.font: DesignSystem.Font.Base.bodyBold])
+                         [.font: DesignSystem.Font.Base.bodySemiBold])
                     ],
                     bundle: .module
                 ),
@@ -60,7 +60,7 @@ struct BluetoothPoweredOffViewModel: GDSScreenViewModel, BaseViewModel {
                     stringKey: "turnOnBluetoothStep2",
                     stringAttributes: [
                         (GDSLocalisedString(stringKey: "turnOnBluetoothStep2Bold", bundle: .module).value,
-                         [.font: DesignSystem.Font.Base.bodyBold])
+                         [.font: DesignSystem.Font.Base.bodySemiBold])
                     ],
                     bundle: .module
                 ),
